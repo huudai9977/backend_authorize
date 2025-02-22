@@ -7,18 +7,19 @@ dotenv.config();
 
 // Hàm tạo Access Token
 const generateAccessToken = (user) => {
-  return jwt.sign({ email: user.email }, process.env.JWT_SECRET, { expiresIn: "15m" });
+  return jwt.sign({ email: user.email, role: user.role }, process.env.JWT_SECRET, { expiresIn: "15m" });
 };
 
 // Hàm tạo Refresh Token
 const generateRefreshToken = (user) => {
-  return jwt.sign({ email: user.email }, process.env.REFRESH_SECRET, { expiresIn: "7d" });
+  return jwt.sign({ email: user.email}, process.env.REFRESH_SECRET, { expiresIn: "7d" });
 };
 
 // Đăng ký người dùng mới
 export const register = async (req, res) => {
+  
   const { email, password } = req.body;
-
+  console.log(req.body);
   try {
     const existingUser = await User.findOne({ email });
     if (existingUser) return res.status(400).json({ message: "User already exists." });
@@ -38,7 +39,7 @@ export const login = async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email});
     if (!user) return res.status(401).json({ message: "Invalid credentials." });
 
     const isMatch = await bcrypt.compare(password, user.password);

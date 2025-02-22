@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 
-const authenticate = (req, res, next) => {
+export const authenticate = (req, res, next) => {
   const token = req.header("Authorization")?.replace("Bearer ", "");
 
   if (!token) {
@@ -16,4 +16,13 @@ const authenticate = (req, res, next) => {
   }
 };
 
-export default authenticate;
+// Middleware phân quyền
+export const authorize = (roles) => {
+  return (req, res, next) => {
+    if (!roles.includes(req.user.role)) {
+      return res.status(403).json({ message: "Forbidden. You don't have permission." });
+    }
+    next();
+  };
+};
+

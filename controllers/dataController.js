@@ -1,5 +1,5 @@
 // Handle POST request for /api/data
-const postData = (req, res) => {
+export const postData = (req, res) => {
   const data = req.body;
   console.log("Received data:", data);
   res.json({
@@ -9,11 +9,11 @@ const postData = (req, res) => {
 };
 
 // Handle GET request for /api/data
-const getData = (req, res) => {
+export const getData = (req, res) => {
   res.json({
     message: "GET request successful",
     data: { exampleKey: "exampleValue" },
   });
 };
 
-export { postData, getData };
+
