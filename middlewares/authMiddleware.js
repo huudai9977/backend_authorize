@@ -16,7 +16,7 @@ export const authenticate = (req, res, next) => {
   }
 };
 
-// Middleware phân quyền
+// Authorization Middleware
 export const authorize = (roles) => {
   return (req, res, next) => {
     if (!roles.includes(req.user.role)) {

@@ -5,17 +5,17 @@ import User from "../models/User.js";
 
 dotenv.config();
 
-// Hàm tạo Access Token
+// Function to generate Access Token
 const generateAccessToken = (user) => {
   return jwt.sign({ email: user.email, role: user.role }, process.env.JWT_SECRET, { expiresIn: "15m" });
 };
 
-// Hàm tạo Refresh Token
+// Function to generate Refresh Token
 const generateRefreshToken = (user) => {
   return jwt.sign({ email: user.email}, process.env.REFRESH_SECRET, { expiresIn: "7d" });
 };
 
-// Đăng ký người dùng mới
+// Register a new user
 export const register = async (req, res) => {
   
   const { email, password } = req.body;
@@ -34,7 +34,7 @@ export const register = async (req, res) => {
   }
 };
 
-// Đăng nhập và cấp token
+// Login and issue token
 export const login = async (req, res) => {
   const { email, password } = req.body;
 
@@ -45,7 +45,7 @@ export const login = async (req, res) => {
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) return res.status(401).json({ message: "Invalid credentials." });
 
-    // Tạo token
+    // Generate token
     const accessToken = generateAccessToken(user);
     const refreshToken = generateRefreshToken(user);
 
@@ -58,16 +58,17 @@ export const login = async (req, res) => {
   }
 };
 
-// Làm mới Access Token
+// Refresh Access Token
 export const refreshToken = async (req, res) => {
   const { token } = req.body;
 
   try {
+    const decoded = jwt.verify(token, process.env.REFRESH_SECRET);
+
     const user = await User.findOne({ refreshToken: token });
     if (!user) return res.status(403).json({ message: "Invalid Refresh Token" });
 
-    const decoded = jwt.verify(token, process.env.REFRESH_SECRET);
-    const newAccessToken = generateAccessToken({ email: decoded.email });
+    const newAccessToken = generateAccessToken(user);
 
     res.json({ accessToken: newAccessToken });
   } catch (error) {
@@ -75,7 +76,7 @@ export const refreshToken = async (req, res) => {
   }
 };
 
-// Đăng xuất (xoá Refresh Token)
+// Logout (delete Refresh Token)
 export const logout = async (req, res) => {
   const { token } = req.body;
 

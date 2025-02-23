@@ -3,9 +3,9 @@ import { register, login, refreshToken, logout } from "../controllers/authContro
 
 const router = express.Router();
 
-router.post("/register", register); // Đăng ký
-router.post("/login", login); // Đăng nhập
-router.post("/refresh-token", refreshToken); // Làm mới Access Token
-router.post("/logout", logout); // Đăng xuất
+router.post("/register", register); 
+router.post("/login", login); 
+router.post("/refresh-token", refreshToken); 
+router.post("/logout", logout); 
 
 export default router;
